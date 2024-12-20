@@ -1,0 +1,205 @@
+---
+title:  "Assignment1"
+author: "Ishtiaq Mahmud Fahim"
+format: pdf
+editor: visual
+---
+
+# 2.2 Solution
+
+```{r pull, warning=F, message=F}
+library(alr4)
+library(tidyverse)
+
+mydat <- as_tibble(UBSprices %>% 
+  mutate(
+    city = row.names(UBSprices)
+  ) %>% 
+  select(city, rice2003, rice2009)
+)
+ggplot(mydat)+
+  geom_point(
+    aes(
+      x = rice2003,
+      y = rice2009
+    )
+  )+
+  geom_abline(intercept = 0, slope = 1, color = "blue", linetype = "solid",
+               size = 1
+  )+
+  geom_smooth(
+    aes(
+      x = rice2003,
+      y = rice2009
+    ),
+    se = F,
+    col = "red",
+    method = "lm"
+  )
+```
+
+-   The **Blue Line** represents the **y = x** line.
+
+-   The **Red Line** represents the **Mean** line.
+
+### 2.2.1
+
+The line **y = x** represents a situation where the rice price in 2009 is equal to the rice price in 2003 for each city.
+
+-   Points **above** the line indicate cities where rice prices were **higher in 2009** compared to 2003
+
+-   Points **below** the line show cities where prices were **lower in 2009** compared to 2003
+
+\newpage
+
+### 2.2.2
+
+```{r}
+
+mydat %>% 
+  mutate(
+    price_difference = rice2009 - rice2003
+  ) %>% 
+  filter(price_difference == max(price_difference) |
+         price_difference == min(price_difference))
+
+```
+
+-   **Vilnius** has the largest price increase.
+
+-   **Mumbai** has the largest price decrease.
+
+### 2.2.3
+
+```{r}
+sumsq <- function(x,y){
+  ss <- sum((x-mean(x))*y)
+  return(ss)
+}
+
+slop <- function(x,y){
+  sumsq(x,y)/sumsq(x,x)
+}
+
+slop(mydat$rice2003,mydat$rice2009)
+```
+
+The OLS line where $\hat{y} = \hat{\beta_0} + \hat{\beta_1}x$ , $\hat{\beta_1} = 0.5013831$ suggests that for each unit **increase in the 2003 price**, the **2009 price increases by less than one, around 0.501 unit on average**.
+
+This implies a **lower rate of increase** in 2009 prices relative to 2003, which could suggest that overall prices may not have increased as much from 2003 to 2009 but **does not** suggest that the prices are lower in 2009 than in 2003.
+
+\newpage
+
+```{r, ref.label= "pull", results=T, echo=FALSE, message=FALSE, warning=FALSE}
+
+```
+
+### 2.2.4
+
+1.  **Non-Linearity :** The relationship between 2003 and 2009 prices may not be linear, as economic factors influencing prices might vary across regions.
+
+2.  **Outliers :** Some cities might have unique economic conditions causing them to deviate significantly from the trend, impacting the regression line's accuracy.
+
+\newpage
+
+# 2.9 Solution
+
+### 2.9.1
+
+$$
+E(Y \mid X=x) = \beta_0 + \beta_1x
+$$
+
+The value of the predictor **X** is replaced by $Z = aX + b ; a\not=0$
+
+This transformation leads to a new regression model in terms of **Z** :
+
+$$
+Y = \gamma_0 + \gamma_1z + \epsilon
+$$
+
+By expressing **X** in terms of **Z** it can be achieved that;
+
+$$
+X = \frac{Z-b}{a}
+$$
+
+$$
+E(Y \mid Z=z) = (\beta_0 - \frac{\beta_1b}{a}) + \frac{\beta_1}{a}z
+$$
+
+Hence,
+
+$$
+\gamma_0 = \beta_0 - \frac{\beta_1b}{a}
+$$
+
+and
+
+$$
+\gamma_1 = \frac{\beta_1}{a}
+$$
+
+Since the Response **Y** has not change, the estimate of $\sigma^2$ remains **unchanged**.
+
+Because the transformation of **X** does not change the inherent spread or variability of **Y** around the regression line. The variance of **Y** given **X** is a property of **Y**'s distribution in relation to **X** and is not altered by scale of location of **X** itself.
+
+Now for **t-statistic** :
+
+$$
+t_{\gamma_1} = \frac{\hat{\gamma_1}}{\hat{SE(\hat{\gamma_1})}} = \frac{\frac{\hat{\beta_1}}{a}}{\frac{\hat{SE(\hat{\beta_1})}}{|a|}} = \frac{\hat{\beta_1}}{SE(\hat{\beta_1})}
+$$
+
+So, it remains the same.
+
+\newpage
+
+### 2.9.2
+
+$$ E(Y \mid X=x) = \beta_0 + \beta_1x $$
+
+The value of the response **Y** is replaced by $V = dY ; d \not= 0$
+
+This transformation leads to a new regression model in terms of **V** :
+
+$$
+V = \delta_0 + \delta_1x + \epsilon
+$$
+
+By expressing **V** in terms of **Y** it can be achieved that;
+
+$$
+E(dY \mid X=x) = d\beta_0 + d\beta_1x
+$$
+
+Hence,
+
+$$
+\delta_0 = d\beta_0
+$$
+
+and
+
+$$
+\delta_1 = d\beta_1
+$$
+
+The variance changes as the response **Y** has changed,
+
+$$
+Var[V\mid X=x] = Var[dY\mid X=x] = d^2Var[Y\mid X=x]
+$$
+
+So,
+
+$$
+\hat{\sigma^2_v} = d^2\hat{\sigma^2}
+$$
+
+Now for **t-statistic :**
+
+$$
+t_{\delta_1} = \frac{\hat{\delta_1}}{\hat{SE(\hat{\delta_1})}} = \frac{d\hat{\beta_1}}{\hat{SE(d\hat{\beta_1})}} = \frac{d\hat{\beta_1}}{d\hat{SE(\hat{\beta_1})}} = \frac{\hat{\beta_1}}{\hat{SE(\hat{\beta_1})}} = t_{\beta_1}
+$$
+
+So, it remains the same.
