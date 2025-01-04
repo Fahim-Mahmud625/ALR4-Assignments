@@ -1,0 +1,156 @@
+---
+title: "Assignment 2"
+author: "Ishtiaq Mahmud Fahim"
+format: pdf
+editor: visual
+---
+
+# 3.5 Solution
+
+## 3.5.1
+
+The slope for the regression of $Y$ on $X_1$ is:
+
+$$
+\hat{\beta}_{1Y \sim X_1} = \frac{S_{X_1Y}}{S_{X_1X_1}}
+$$
+
+The slope for the regression of $Y$ on $X_2$ is:
+
+$$
+\hat{\beta}_{1Y \sim X_2} = \frac{S_{X_2Y}}{S_{X_2X_2}}
+$$
+
+For the regression of $X_2$ on $X_1$, the slope is:
+
+$$
+\hat{\beta}_{1X_2 \sim X_1} = \frac{S_{X_1X_2}}{S_{X_1X_1}}
+$$
+
+Since the sample correlation is 0, $S_{X_1X_2} = 0$, we have:
+
+$$
+\hat{\beta}_{1X_2 \sim X_1} = 0
+$$
+
+\newpage
+
+## 3.5.2
+
+The residuals measure the part of $Y$ unexplained by $X_1$:
+
+$$
+\hat{e}_{Y \sim X_1} = Y - \hat{Y} 
+$$
+
+$$
+= Y - \hat{\beta}_{1Y \sim X_1} X_1
+$$
+
+The residuals measure the part of $X_2$ unexplained by $X_1$ :
+
+$$
+\hat{e}_{X_2 \sim X_1} = X_2 - \hat{X}_2 
+$$
+
+$$
+= X_2 - \hat{\beta}_{1X_2 \sim X_1} X_1
+$$
+
+Since $\hat{\beta}_{1X_2 \sim X_1} = 0$, we get:
+
+$$
+\hat{e}_{X_2 \sim X_1} = X_2
+$$
+
+The relationship between $\hat{e}_{Y \sim X_1}$ and $\hat{e}_{X_2 \sim X_1}$ forms the added-variable plot for $X_2$
+
+\newpage
+
+## 3.5.3
+
+The slope for the added-variable regression of $Y$ on $X_2$ after adjusting for $X_1$ is given by:
+
+$$
+\hat{\beta}_{1Y \sim X_2 | X_1} = \frac{\text{Cov}(\hat{e}_{Y \sim X_1}, \hat{e}_{X_2 \sim X_1})}{\text{Var}(\hat{e}_{X_2 \sim X_1})}
+$$
+
+$$
+= \sum\frac{({\hat{e}_{Y \sim X_1}\hat{e}_{X_2 \sim X_1})}}{\hat{e}_{X_2 \sim X_1}^2}
+$$
+
+$$
+= \sum \frac{(x_{i2} - \bar{x}_2)(y_i - \bar{y} - \hat{\beta}_1 (x_{i1} - \bar{x}_1))}{(x_{i2} - \bar{x}_2)^2}
+$$
+
+$$
+= \frac{\left( \sum (x_{i1} - \bar{x}_1)(x_{i2} - \bar{x}_2) + S_{X_2Y} \right)}{S_{X_2X_2}}
+$$
+
+$$
+= \frac{S_{X_2Y}}{S_{X_2X_2}}
+$$
+
+$$
+= \hat{\beta}_{1Y \sim X_2}
+$$
+
+The intercept for the added-variable regression is:
+
+$$
+\hat{\beta_0}_{1Y \sim X_2 | X_1} = \bar{Y} - \beta_{Y \sim X_2 | X_1} \bar{X}_2 
+$$
+
+$$
+= \bar{Y} - \beta_{Y \sim X_2} \bar{X}_2
+$$
+
+Which is exactly the same as the intercept from the regression of $Y \sim X_2$
+
+\newpage
+
+# 4.3 Solution
+
+## 4.3.1
+
+Given,
+
+$$
+y_i = \mu_y + \rho_{xy}\frac{\sigma_y}{\sigma_x}(x_i - \mu_x) + e_i
+$$
+
+Now ignoring the error term, solving the equation for x as a function y and the parameters gives us,
+
+$$
+x_i = \mu_x + \frac{1}{\rho_{xy}}\frac{\sigma_x}{\sigma_y}(y_i - \mu_y)
+$$
+
+As the correlation term is at the denominator, it has to be greater than 0 or the term becomes undefined.
+
+\newpage
+
+## 4.3.2
+
+The conditional distribution is defined by,
+
+$$
+x_i \sim y_i = N( \mu_x + \rho_{xy}\frac{\sigma_x}{\sigma_y}(y_i - \mu_y),\sigma_x^2(1-\rho_{xy}^2))
+$$
+
+Hence,
+
+$$
+\mathbb{E}[x_i \mid y_i] = \mu_x + \rho_{xy}\frac{\sigma_x}{\sigma_y}(y_i - \mu_y)
+$$
+
+These produces the same fitted line if and only if,
+
+$$
+\rho_{xy} = 1 
+$$
+
+or
+
+$$
+\rho_{xy} = -1
+$$
