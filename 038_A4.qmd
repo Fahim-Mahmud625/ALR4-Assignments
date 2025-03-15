@@ -1,0 +1,159 @@
+---
+title: "Assignment 4"
+author: "Ishtiaq Mahmud Fahim"
+format: pdf
+editor: visual
+---
+
+# 6.1 Solution
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(alr4)
+```
+
+\begin{center}
+
+NH : lifeExp $\sim$ 1
+
+AH : lifeExp $\sim$ group
+
+\end{center}
+
+```{r}
+dat <- UN11 %>% 
+  select(lifeExpF, group)
+
+dat <- dat %>% 
+  mutate(
+    U2 = if_else(group == "other", 1, 0),
+    U3 = if_else(group == "africa", 1, 0),
+  )
+
+n <- length(dat$group)
+
+Y <- matrix(
+  c(dat$lifeExpF),
+  ncol = 1
+)
+X <- matrix(
+  c(
+    rep(1,n),
+    dat$U2,
+    dat$U3
+  ),
+  ncol = 3
+)
+
+H <- X %*% solve(t(X) %*% X) %*% t(X)
+I <- diag(1, 199, 199)
+J <- matrix(1, 199, 199)
+
+
+RSS_0 <- t(Y) %*%  (I - J/199) %*% Y
+df_0 <- 198
+
+RSS_1 <- t(Y) %*%  (I - H) %*% Y
+df_1 <- 196
+
+F_cal <- ((RSS_0 - RSS_1)/(df_0 - df_1))/(RSS_1 / df_1)
+F_cal
+
+p_val <- pf(F_cal, 2, df_1, lower.tail = FALSE)
+cp <- if_else(p_val < 0.001, "<0.001",as.factor(p_val))
+cp
+```
+
+-   The F-test Yielded an F-value of **159.2687** with a p-value less than **0.001**
+
+-   So it suggests that the factor in the model significantly improves the fit compared to a model without it. Therefore, we may reject the null hypothesis in favor of the alternative hypothesis.
+
+\newpage
+
+# 6.4 Solution
+
+\begin{center}
+
+NH : lifeExp $\sim$ log(ppgdp) + group $\colon$ log(ppgdp)
+
+AH : lifeExp $\sim$ group + log(ppgdp) + group $\colon$ log(ppgdp)
+
+\end{center}
+
+## 6.4.1
+
+The **NH** model states that female life expectancy depends on the **log(ppgdp)** and the **effect of ppgdp varies across groups**. Also the **NH** model violets the **marginality principle** because it includes an interaction term **group : log(ppgdp)** without including the corresponding main effect for group.
+
+## 6.4.2
+
+```{r}
+
+dat2 <- UN11 %>% 
+  mutate(
+    log_ppgdp = log(ppgdp)
+  ) %>% 
+  select(lifeExpF, group, log_ppgdp)
+
+dat2 <- dat2 %>% 
+  mutate(
+    U2 = if_else(group == "other", 1, 0),
+    U3 = if_else(group == "africa", 1, 0),
+    U2x = U2*log_ppgdp,
+    U3x = U3*log_ppgdp
+  )
+
+n <- length(dat2$log_ppgdp)
+
+Y <- matrix(
+  c(dat2$lifeExpF),
+  ncol = 1
+)
+
+X0 <- matrix(
+  c(
+    rep(1,n),
+    dat2$log_ppgdp,
+    dat2$U2x,
+    dat2$U3x
+  ),
+  ncol = 4
+)
+
+X1 <- matrix(
+  c(
+    rep(1,n),
+    dat2$U2,
+    dat2$U3,
+    dat2$log_ppgdp,
+    dat2$U2x,
+    dat2$U3x
+  ),
+  ncol = 6
+)
+
+H0 <- X0 %*% solve(t(X0) %*% X0) %*% t(X0)
+
+H1 <- X1 %*% solve(t(X1) %*% X1) %*% t(X1)
+
+
+I <- diag(1, 199, 199)
+
+
+
+RSS_0 <- t(Y) %*%  (I - H0) %*% Y
+df_0 <- 195
+
+RSS_1 <- t(Y) %*%  (I - H1) %*% Y
+df_1 <- 193
+
+F_cal <- ((RSS_0 - RSS_1)/(df_0 - df_1))/(RSS_1 / df_1)
+F_cal
+
+p_val <- round(pf(F_cal, 5, df_1, lower.tail = FALSE),5)
+cp <- if_else(p_val < 0.001, "<0.001",as.factor(p_val))
+cp
+```
+
+## 
+
+The F-test statistic of **2.93** with a p-value of **0.014** indicates that there is a statistically significant difference between the **NH** and **AH** models at the 5% significance level. This suggests that adding the main effect of **group** improves the model.
